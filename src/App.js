@@ -3,15 +3,19 @@ import Card from "./components/Card";
 import QuoteForm from "./components/QuoteForm";
 import QuoteList from "./components/QuoteList";
 
+function createQuote(text) {
+  return {
+    id: Math.random().toString(),
+    text,
+    createdAt: new Date().toLocaleString(),
+  };
+}
+
 function App() {
   const [quotes, setQuotes] = useState([]);
 
   function addQuoteHandler(quoteText) {
-    const newQuote = {
-      id: Math.random().toString(),
-      text: quoteText,
-      createdAt: new Date().toLocaleString(),
-    };
+    const newQuote = createQuote(quoteText);
 
     console.log("Adding quote:", newQuote);
 
@@ -37,6 +41,9 @@ function App() {
     setQuotes([]);
   }
 
+  const isClearDisabled = quotes.length === 0;
+  const clearTitle = isClearDisabled ? "No quotes to clear" : "Clear all quotes";
+
   return (
     <div className="app">
       <h1 className="title">Quotes</h1>
@@ -49,13 +56,12 @@ function App() {
         <div className="list-header">
           <h2 className="subtitle">Your Quotes</h2>
 
-          
           <button
             className="btn-secondary"
             type="button"
             onClick={clearAllHandler}
-            disabled={quotes.length === 0}
-            title={quotes.length === 0 ? "No quotes to clear" : "Clear all quotes"}
+            disabled={isClearDisabled}
+            title={clearTitle}
           >
             Clear All
           </button>

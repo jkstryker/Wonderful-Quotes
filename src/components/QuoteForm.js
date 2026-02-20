@@ -3,38 +3,40 @@ import { useState } from "react";
 const MAX_CHARS = 180;
 
 function QuoteForm(props) {
-  const [quote, setQuote] = useState("");
-  const [hasError, setHasError] = useState(false);
+  const [quoteText, setQuoteText] = useState("");
+  const [isInvalid, setIsInvalid] = useState(false);
 
   function quoteChangeHandler(e) {
-    setQuote(e.target.value);
-    if (hasError) setHasError(false);
+    setQuoteText(e.target.value);
+    if (isInvalid) setIsInvalid(false);
     console.log("Textarea:", e.target.value);
   }
 
   function submitHandler(e) {
     e.preventDefault();
 
-    const cleaned = quote.trim();
+    const trimmedQuoteText = quoteText.trim();
 
-    if (cleaned === "") {
+    if (trimmedQuoteText === "") {
       console.log("Blocked submit: blank quote");
-      setHasError(true);
+      setIsInvalid(true);
       return;
     }
 
-    props.onAddQuote(cleaned);
-    setQuote("");
-    setHasError(false);
+    props.onAddQuote(trimmedQuoteText);
+    setQuoteText("");
+    setIsInvalid(false);
   }
 
-  const controlClasses = hasError ? "control invalid" : "control";
+  const controlClasses = isInvalid ? "control invalid" : "control";
+  const isAtCharLimit = quoteText.length >= MAX_CHARS;
+  const counterClasses = isAtCharLimit ? "counter warn" : "counter";
 
   return (
     <form className="quote-form" onSubmit={submitHandler}>
       <h2 className="subtitle">Add a Quote</h2>
 
-      {hasError && (
+      {isInvalid && (
         <p className="error-text">Please enter a quote before submitting.</p>
       )}
 
@@ -42,15 +44,15 @@ function QuoteForm(props) {
         <label>Your Quote</label>
         <textarea
           rows="4"
-          value={quote}
+          value={quoteText}
           onChange={quoteChangeHandler}
           maxLength={MAX_CHARS}
           placeholder="Type something memorable..."
         />
         <div className="meta-row">
           <span className="hint">Click a quote below to delete it.</span>
-          <span className={quote.length >= MAX_CHARS ? "counter warn" : "counter"}>
-            {quote.length}/{MAX_CHARS}
+          <span className={counterClasses}>
+            {quoteText.length}/{MAX_CHARS}
           </span>
         </div>
       </div>
